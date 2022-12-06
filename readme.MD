@@ -12,4 +12,5 @@ Ni skall skapa e2e-tester för applikationen som ni har fått given.
 
 För G krävs det att ni har skrivit tester som går igenom "happy flow" av data och använder data från api:t.
 För VG krävs det att ni även testar vad som händer om ni inte får den data som ni förväntar er och även använder mockad data
+
 # e2e-tests-assignment
