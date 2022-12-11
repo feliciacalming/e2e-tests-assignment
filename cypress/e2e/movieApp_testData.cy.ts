@@ -21,7 +21,7 @@ describe("testing movieApp with test data", () => {
     cy.get("input").type(inputValue).should("have.value", inputValue);
   });
 
-  it("should search for input value but return test data", () => {
+  it("should search for input value but return test data when clicking button", () => {
     cy.intercept("GET", "http://omdbapi.com/*", { fixture: "movies" }).as(
       "moviecall"
     );
@@ -36,6 +36,16 @@ describe("testing movieApp with test data", () => {
     cy.get("div.movie:first img")
       .should("have.attr", "src")
       .should("include", "http");
+  });
+
+  it("should search for input value when pressing ENTER", () => {
+    cy.intercept("GET", "http://omdbapi.com/*", { fixture: "movies" }).as(
+      "moviecall"
+    );
+
+    cy.get("input").type("star{enter}").should("have.value", "star");
+
+    cy.wait("@moviecall").its("request.url").should("contain", "star");
   });
 
   it("should display error message", () => {

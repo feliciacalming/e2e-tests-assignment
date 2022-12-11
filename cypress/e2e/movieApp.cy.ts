@@ -1,4 +1,4 @@
-describe("movieApp", () => {
+describe("testing movieApp", () => {
   beforeEach("Should visit the page before each test", () => {
     cy.visit("index.html");
   });
