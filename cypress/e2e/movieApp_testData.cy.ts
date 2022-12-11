@@ -3,7 +3,7 @@ describe("testing movieApp with test data", () => {
     cy.visit("index.html");
   });
 
-  let inputValue = "star";
+  let inputValue: string = "star";
 
   it("should show search form", () => {
     cy.get("form").should("have.id", "searchForm");
@@ -14,15 +14,14 @@ describe("testing movieApp with test data", () => {
   });
 
   it("should be able to type in input", () => {
-    cy.get("input").type("star").should("have.value", "star");
-  });
-
-  it("should get input value", () => {
-    // let inputValue: string = "Léon";
     cy.get("input").type(inputValue).should("have.value", inputValue);
   });
 
-  it("should search for input value but show test data", () => {
+  it("should get input value", () => {
+    cy.get("input").type(inputValue).should("have.value", inputValue);
+  });
+
+  it("should search for input value but return test data", () => {
     cy.intercept("GET", "http://omdbapi.com/*", { fixture: "movies" }).as(
       "moviecall"
     );
@@ -32,19 +31,31 @@ describe("testing movieApp with test data", () => {
 
     cy.wait("@moviecall").its("request.url").should("contain", "star");
     cy.get("div.movie:first h3").contains("Léon");
+    cy.get("div.movie:nth-child(2) h3").contains("Twin Peaks");
+    cy.get("div.movie:nth-child(3) h3").contains("Magnolia");
     cy.get("div.movie:first img")
       .should("have.attr", "src")
       .should("include", "http");
+  });
 
-    cy.get("div.movie:nth-child(2) h3").contains("Twin Peaks");
-    cy.get("div.movie:nth-child(3) h3").contains("Magnolia");
+  it("should display error message", () => {
+    cy.intercept("GET", "http://omdbapi.com/*", { fixture: "emptyMovies" }).as(
+      "moviecall"
+    );
+
+    cy.get("input").type(inputValue).should("have.value", inputValue);
+    cy.get("button").click();
+
+    cy.wait("@moviecall").its("request.url").should("contain", inputValue);
+    cy.get("div").should("have.length", 1);
+    cy.get("p").contains("sökresultat");
   });
 
   it("should replace existing movie result in div with new search results", () => {
-    //first search
     let firstInputValue: string = "Evangelion";
     let secondInputValue: string = "Sailor";
 
+    //first search
     cy.intercept("GET", "http://omdbapi.com/*", {
       fixture: "movies",
     }).as("moviecall");
@@ -54,10 +65,10 @@ describe("testing movieApp with test data", () => {
 
     cy.wait("@moviecall").its("request.url").should("contain", firstInputValue);
 
-    cy.get("div:first > div").should("have.length", 3);
+    cy.get("#movie-container > div").should("have.length", 3);
     cy.get("div.movie:first h3").contains("Léon");
 
-    //second search
+    //clearing input + second search with different test data
     cy.intercept("GET", "http://omdbapi.com/*", { fixture: "otherMovies" }).as(
       "secondMoviecall"
     );
@@ -72,7 +83,7 @@ describe("testing movieApp with test data", () => {
       .its("request.url")
       .should("contain", secondInputValue);
 
-    cy.get("div:first > div").should("have.length", 3);
+    cy.get("#movie-container > div").should("have.length", 3);
     cy.get("div.movie:first h3").contains("Lost In Translation");
   });
 
@@ -80,26 +91,12 @@ describe("testing movieApp with test data", () => {
     cy.get("input").type("Twin Peaks").should("have.value", "Twin Peaks");
     cy.get("button").click();
 
-    cy.get("div > div").should("have.length", 10);
-    cy.get("div div:first").contains("Twin");
+    cy.get("#movie-container > div").should("have.length", 10);
+    cy.get("#movie-container div:first h3").contains("Twin");
 
     //after reloading page
     cy.reload();
     cy.get("input").should("have.value", "");
     cy.get("div").should("have.length", 1);
-  });
-
-  //if movies.length = 0:
-  it("should display error message", () => {
-    cy.intercept("GET", "http://omdbapi.com/*", { fixture: "emptyMovies" }).as(
-      "moviecall"
-    );
-
-    cy.get("input").type(inputValue).should("have.value", inputValue);
-    cy.get("button").click();
-
-    cy.wait("@moviecall").its("request.url").should("contain", inputValue);
-    cy.get("div").should("have.length", 1);
-    cy.get("p").contains("sökresultat");
   });
 });
