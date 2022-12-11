@@ -10,8 +10,13 @@ describe("testing movieApp", () => {
     cy.get("form").submit();
 
     cy.get("#movie-container > div").should("have.length", 10);
-    cy.get("#movie-container div:first h3").contains("Star Wars");
-    cy.get("#movie-container div:nth-child(2) h3").contains("Star Wars");
+    cy.get("#movie-container div:first h3").contains(inputValue, {
+      matchCase: false,
+    }); // matchCase: false ignores case sensitivity, which makes inputValue match h3-text regardless of whether it says "star wars" or "Star Wars"
+
+    cy.get("#movie-container div:nth-child(2) h3").contains(inputValue, {
+      matchCase: false,
+    });
     cy.get("div.movie img")
       .should("have.attr", "src")
       .should("include", "http");
@@ -24,15 +29,17 @@ describe("testing movieApp", () => {
   });
 
   it("should replace existing movie result in div with new search results", () => {
-    let firstInputValue: string = "Evangelion";
-    let secondInputValue: string = "Sailor Moon";
+    let firstInputValue: string = "evangelion";
+    let secondInputValue: string = "sailor moon";
 
     //first search
     cy.get("input").type(firstInputValue).should("have.value", firstInputValue);
     cy.get("button").click();
 
     cy.get("#movie-container > div").should("have.length", 10);
-    cy.get("#movie-container div:first h3").contains("Evangelion");
+    cy.get("#movie-container div:first h3").contains(firstInputValue, {
+      matchCase: false,
+    });
 
     //clearing input + second search
     cy.get("input")
@@ -42,7 +49,9 @@ describe("testing movieApp", () => {
     cy.get("button").click();
 
     cy.get("#movie-container > div").should("have.length", 10);
-    cy.get("#movie-container div:first h3").contains("Sailor Moon");
+    cy.get("#movie-container div:first h3").contains(secondInputValue, {
+      matchCase: false,
+    });
   });
 
   it("should clear input text and erase movie-divs when refreshing page", () => {
