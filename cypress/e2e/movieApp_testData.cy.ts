@@ -76,6 +76,19 @@ describe("testing movieApp with test data", () => {
     cy.get("div.movie:first h3").contains("Lost In Translation");
   });
 
+  it("should clear input text and erase movie-divs when reloading page", () => {
+    cy.get("input").type("Twin Peaks").should("have.value", "Twin Peaks");
+    cy.get("button").click();
+
+    cy.get("div > div").should("have.length", 10);
+    cy.get("div div:first").contains("Twin");
+
+    //after reloading page
+    cy.reload();
+    cy.get("input").should("have.value", "");
+    cy.get("div").should("have.length", 1);
+  });
+
   //if movies.length = 0:
   it("should display error message", () => {
     cy.intercept("GET", "http://omdbapi.com/*", { fixture: "emptyMovies" }).as(

@@ -22,7 +22,6 @@ describe("movieApp with real data", () => {
     cy.get("input").type(inputValue).should("have.value", inputValue);
   });
 
-  //
   it("should display 10 movies from search result, each in their own div with title and poster", () => {
     cy.get("input").type(inputValue).should("have.value", inputValue);
     cy.get("form").submit();
