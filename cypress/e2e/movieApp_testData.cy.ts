@@ -33,6 +33,7 @@ describe("testing movieApp with test data", () => {
     cy.get("div.movie:first h3").contains("Léon");
     cy.get("div.movie:nth-child(2) h3").contains("Twin Peaks");
     cy.get("div.movie:nth-child(3) h3").contains("Magnolia");
+    cy.get("div.movie > img").should("have.length", 3);
     cy.get("div.movie:first img")
       .should("have.attr", "src")
       .should("include", "http");
@@ -48,7 +49,7 @@ describe("testing movieApp with test data", () => {
     cy.wait("@moviecall").its("request.url").should("contain", "star");
   });
 
-  it("should display error message", () => {
+  it("should display error message when getting empty array", () => {
     cy.intercept("GET", "http://omdbapi.com/*", { fixture: "emptyMovies" }).as(
       "moviecall"
     );
@@ -104,7 +105,7 @@ describe("testing movieApp with test data", () => {
     cy.get("#movie-container > div").should("have.length", 10);
     cy.get("#movie-container div:first h3").contains("Twin");
 
-    //after reloading page
+    //simulating that the user refreshes the page
     cy.reload();
     cy.get("input").should("have.value", "");
     cy.get("div").should("have.length", 1);

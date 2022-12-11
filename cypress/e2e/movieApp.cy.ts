@@ -10,19 +10,18 @@ describe("testing movieApp", () => {
     cy.get("form").submit();
 
     cy.get("#movie-container > div").should("have.length", 10);
-    cy.get("#movie-container div:first h3").contains(inputValue, {
+    cy.get("div.movie h3").contains(inputValue, {
       matchCase: false,
     }); // matchCase: false ignores case sensitivity, which makes inputValue match h3-text regardless of whether it says "star wars" or "Star Wars"
 
-    cy.get("#movie-container div:nth-child(2) h3").contains(inputValue, {
-      matchCase: false,
-    });
+    cy.get("div.movie h3").should("have.length", 10);
     cy.get("div.movie img")
+      .should("have.length", 10)
       .should("have.attr", "src")
       .should("include", "http");
   });
 
-  it("should display error message", () => {
+  it("should display error message when getting empty array", () => {
     cy.get("input").type(" ").should("have.value", " ");
     cy.get("button").click();
     cy.get("#movie-container p").contains("Inga sökresultat att visa");
