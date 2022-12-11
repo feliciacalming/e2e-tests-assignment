@@ -1,33 +1,18 @@
-describe("movieApp with real data", () => {
+describe("movieApp", () => {
   beforeEach("Should visit the page before each test", () => {
     cy.visit("index.html");
   });
 
   let inputValue: string = "star";
 
-  it("should show search form", () => {
-    cy.get("form").should("have.id", "searchForm");
-  });
-
-  it("should show button", () => {
-    cy.get("button").should("have.id", "search");
-  });
-
-  it("should be able to type in input", () => {
-    cy.get("input").type("star").should("have.value", "star");
-  });
-
-  it("should get input value", () => {
-    // let inputValue: string = "Léon";
-    cy.get("input").type(inputValue).should("have.value", inputValue);
-  });
-
   it("should display 10 movies from search result, each in their own div with title and poster", () => {
     cy.get("input").type(inputValue).should("have.value", inputValue);
     cy.get("form").submit();
 
-    cy.get("div:first > div").should("have.length", 10);
-    cy.get("div div:first h3").contains("Star Wars: Episode IV - A New Hope");
+    cy.get("#movie-container > div").should("have.length", 10);
+    cy.get("#movie-container div:first h3").contains(
+      "Star Wars: Episode IV - A New Hope"
+    );
     cy.get("div div:nth-child(2)").contains(
       "Star Wars: Episode V - The Empire Strikes Back"
     );
@@ -72,8 +57,4 @@ describe("movieApp with real data", () => {
     cy.get("input").should("have.value", "");
     cy.get("div").should("have.length", 1);
   });
-
-  ///// MOCKTESTER
 });
-
-///////////////////
